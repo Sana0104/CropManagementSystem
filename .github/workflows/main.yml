@@ -38,17 +38,17 @@ jobs:
 
       - name: Build and Package with Maven
         run: mvn clean package
-        working-directory: ${{ github.workspace }}/path/to/your/maven/project
+        working-directory: ${{ github.workspace }}  # Assuming pom.xml is in the root directory
 
       - name: Upload Artifact to S3
-        working-directory: ${{ github.workspace }}/path/to/your/maven/project/target
+        working-directory: ${{ github.workspace }}/target
         run: aws s3 cp *.war s3://${{ env.S3BUCKET }}/
       
       - name: Upload Artifacts for CodeScan
         uses: actions/upload-artifact@v2
         with:
           name: build-file
-          path: ${{ github.workspace }}/path/to/your/maven/project/target/*.war
+          path: ${{ github.workspace }}/target/*.war
 
   codescan:
     needs: build
