@@ -37,7 +37,7 @@ jobs:
         run: chmod -R +x ./.github
 
       - name: Build and Package Maven for CropService
-        working-directory: ${{ github.workspace }}/CropService  # Ensure this path is correct
+        working-directory: ${{ github.workspace }}/CropService
         run: mvn clean package
 
       - name: Verify the Target Directory Exists
@@ -80,32 +80,28 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v2
         with:
-          name: build-file 
-    
+          name: build-file
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-         aws-region: ${{ env.AWS_REGION }}
-
-    
-      - name: Checkout Repository
-        if: steps.iam-role.outcome == 'success'
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0 
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Run CodeGuru Reviewer
         uses: aws-actions/codeguru-reviewer@v1.1
-        if: ${{ always() }}
-        continue-on-error: false
-        with:          
-          s3_bucket: ${{ env.S3bucket_CodeGuru }} 
-          build_path: .
+        with:
+          s3_bucket: ${{ env.S3bucket_CodeGuru }}
+          build_path: CropService/target
+          source_path: CropService
+          name: Sana0104/CropManagementSystem
+          destination_commit: ${{ github.event.before }}
+          source_commit: ${{ github.sha }}
+          source_branch: refs/heads/master
+          destination_branch: refs/heads/master
 
       - name: Store SARIF File
-        if: steps.iam-role.outcome == 'success'
         uses: actions/upload-artifact@v2
         with:
           name: SARIF_recommendations
@@ -115,7 +111,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: codeguru-results.sarif.json
-    
+
       - name: Check for Critical Vulnerabilities
         run: |
           echo "Check for critical vulnerabilities"
