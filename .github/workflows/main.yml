@@ -40,6 +40,10 @@ jobs:
         working-directory: ${{ github.workspace }}/CropService  # Adjust to the correct directory
         run: mvn clean package
 
+      - name: List Target Directory
+        working-directory: ${{ github.workspace }}/CropService/target
+        run: ls -al
+
       - name: Upload Artifact to S3
         working-directory: ${{ github.workspace }}/CropService/target
         run: aws s3 cp *.war s3://${{ env.S3BUCKET }}/
