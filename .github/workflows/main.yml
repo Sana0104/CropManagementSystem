@@ -37,6 +37,9 @@ jobs:
         working-directory: ${{ github.workspace }}/CropService
         run: |
           mvn clean package
+          echo "Listing contents of working directory:"
+          ls -al
+          echo "Listing contents of target directory:"
           ls -al target
 
       - name: Verify the Target Directory Exists
@@ -87,9 +90,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-
-      - name: List Contents of CodeGuru Artifacts Directory
-        run: ls -al ${{ github.workspace }}/CropService/target
 
       - name: Run CodeGuru Reviewer
         uses: aws-actions/codeguru-reviewer@v1.1
