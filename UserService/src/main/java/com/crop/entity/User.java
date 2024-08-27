@@ -36,7 +36,7 @@ public class User {
     private long mobileNumber;
 
     @NotBlank(message = "Role is required")
-    private String role;
+    private String roles;
 
     @NotNull(message = "Address is required")
     private Address address;
