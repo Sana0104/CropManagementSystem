@@ -33,19 +33,22 @@ jobs:
         with:
           java-version: 1.8
 
+      - name: Set Execute Permissions
+        run: chmod -R +x ./.github
+
       - name: Build and Package with Maven
         run: mvn clean package
-        working-directory: ${{ github.workspace }}
+        working-directory: ${{ github.workspace }}/path/to/your/maven/project
 
       - name: Upload Artifact to S3
-        working-directory: target
+        working-directory: ${{ github.workspace }}/path/to/your/maven/project/target
         run: aws s3 cp *.war s3://${{ env.S3BUCKET }}/
       
       - name: Upload Artifacts for CodeScan
         uses: actions/upload-artifact@v2
         with:
           name: build-file
-          path: target/*.war
+          path: ${{ github.workspace }}/path/to/your/maven/project/target/*.war
 
   codescan:
     needs: build
