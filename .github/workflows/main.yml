@@ -5,64 +5,7 @@ on:
     branches: [ master ]
   pull_request:
 
-env:  codescan:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-      security-events: write
-
-    steps:
-      - name: Download Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: build-file
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0  # Fetch the entire history for a full review
-
-      - name: Run CodeGuru Reviewer
-        uses: aws-actions/codeguru-reviewer@v1.1
-        with:
-          s3_bucket: ${{ env.S3bucket_CodeGuru }}
-          build_path: CropManagementSystem/CropService/target  # Update to the correct build path
-          source_path: CropManagementSystem/CropService  # Update to the correct source path
-          name: Sana0104/CropManagementSystem
-          destination_commit: ${{ github.event.before }}
-          source_commit: ${{ github.sha }}
-          source_branch: refs/heads/master
-          destination_branch: refs/heads/master
-
-      - name: Store SARIF File
-        uses: actions/upload-artifact@v2
-        with:
-          name: SARIF_recommendations
-          path: ./codeguru-results.sarif.json
-
-      - name: Upload Review Result
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: codeguru-results.sarif.json
-
-      - name: Check for Critical Vulnerabilities
-        run: |
-          echo "Check for critical vulnerabilities"
-          count=$(cat codeguru-results.sarif.json | jq '.runs[].results[] | select(.level == "error") | .level' | wc -l)
-          if (( $count > 0 )); then
-            echo "There are $count critical findings, stopping the pipeline."
-            exit 1
-          fi
-
+env:
   AWS_REGION: us-east-1 
   S3BUCKET: glp-s3-1 
   S3bucket_CodeGuru: codeguru-reviewer-glp-s3-1 
@@ -94,12 +37,12 @@ jobs:
         run: chmod -R +x ./.github
 
       - name: Build and Package Maven for CropService
-        working-directory: ${{ github.workspace }}/CropService
+        working-directory: ${{ github.workspace }}/CropManagementSystem/CropService  # Updated path
         run: mvn clean package
 
       - name: Verify the Target Directory Exists
         run: |
-          if [ -d "${{ github.workspace }}/CropService/target" ]; then
+          if [ -d "${{ github.workspace }}/CropManagementSystem/CropService/target" ]; then
             echo "Target directory exists."
           else
             echo "Target directory does not exist."
@@ -107,10 +50,10 @@ jobs:
           fi
 
       - name: List Contents of Target Directory
-        run: ls -al ${{ github.workspace }}/CropService/target
+        run: ls -al ${{ github.workspace }}/CropManagementSystem/CropService/target
 
       - name: Upload Artifact to S3
-        working-directory: ${{ github.workspace }}/CropService/target
+        working-directory: ${{ github.workspace }}/CropManagementSystem/CropService/target
         run: |
           if ls *.jar 1> /dev/null 2>&1; then
             aws s3 cp *.jar s3://${{ env.S3BUCKET }}/
@@ -123,7 +66,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build-file
-          path: ${{ github.workspace }}/CropService/target/*.jar
+          path: ${{ github.workspace }}/CropManagementSystem/CropService/target/*.jar
 
   codescan:
     needs: build
@@ -146,12 +89,17 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Fetch the entire history for a full review
+
       - name: Run CodeGuru Reviewer
         uses: aws-actions/codeguru-reviewer@v1.1
         with:
           s3_bucket: ${{ env.S3bucket_CodeGuru }}
-          build_path: CropService/target
-          source_path: CropService
+          build_path: CropManagementSystem/CropService/target  # Correct build path
+          source_path: CropManagementSystem/CropService  # Correct source path
           name: Sana0104/CropManagementSystem
           destination_commit: ${{ github.event.before }}
           source_commit: ${{ github.sha }}
