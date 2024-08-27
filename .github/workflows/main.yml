@@ -88,8 +88,7 @@ jobs:
         uses: aws-actions/codeguru-reviewer@v1.1
         with:
           s3_bucket: ${{ env.S3bucket_CodeGuru }}
-          build_path: UserService/target  # Path to the build output
-          source_path: .  # Path to the source root
+          source_path: ${{ github.workspace }}/UserService
           name: Sana0104/CropManagementSystem
           destination_commit: ${{ github.event.before }}
           source_commit: ${{ github.sha }}
