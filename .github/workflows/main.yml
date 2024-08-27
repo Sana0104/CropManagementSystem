@@ -33,26 +33,40 @@ jobs:
         with:
           java-version: 17
 
-      - name: Build and Package Maven for UserService
-        working-directory: ${{ github.workspace }}/UserService
+      - name: Set Execute Permissions
+        run: chmod -R +x ./.github
+
+      - name: Build and Package Maven for CropService
+        working-directory: ${{ github.workspace }}/CropService
         run: mvn clean package
 
-      - name: Print Directory Structure
+      - name: Verify the Target Directory Exists
         run: |
-          echo "Current directory:"
-          pwd
-          echo "Directory contents:"
-          ls -al
-          echo "Contents of UserService directory:"
-          ls -al ${{ github.workspace }}/UserService
-          echo "Contents of UserService/target directory:"
-          ls -al ${{ github.workspace }}/UserService/target
+          if [ -d "${{ github.workspace }}/CropService/target" ]; then
+            echo "Target directory exists."
+          else
+            echo "Target directory does not exist."
+            exit 1
+          fi
+
+      - name: List Contents of Target Directory
+        run: ls -al ${{ github.workspace }}/CropService/target
+
+      - name: Upload Artifact to S3
+        working-directory: ${{ github.workspace }}/CropService/target
+        run: |
+          if ls *.jar 1> /dev/null 2>&1; then
+            aws s3 cp *.jar s3://${{ env.S3BUCKET }}/
+          else
+            echo "No .jar files found in the target directory."
+            exit 1
+          fi
 
       - name: Upload Artifacts for CodeScan
         uses: actions/upload-artifact@v2
         with:
           name: build-file
-          path: ${{ github.workspace }}/UserService/target/*.jar
+          path: ${{ github.workspace }}/CropService/target/*.jar
 
   codescan:
     needs: build
@@ -63,19 +77,8 @@ jobs:
       security-events: write
 
     steps:
-      - name: Download Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: build-file
-
-      - name: Print Directory Structure for CodeScan
-        run: |
-          echo "Current directory:"
-          pwd
-          echo "Directory contents:"
-          ls -al
-          echo "Contents of downloaded artifacts:"
-          ls -al ${{ github.workspace }}/UserService/target
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -88,7 +91,7 @@ jobs:
         uses: aws-actions/codeguru-reviewer@v1.1
         with:
           s3_bucket: ${{ env.S3bucket_CodeGuru }}
-          source_path: ${{ github.workspace }}/UserService
+          source_path: ${{ github.workspace }}/CropService
           name: Sana0104/CropManagementSystem
           destination_commit: ${{ github.event.before }}
           source_commit: ${{ github.sha }}
