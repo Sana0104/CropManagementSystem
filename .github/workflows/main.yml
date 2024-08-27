@@ -48,34 +48,6 @@ jobs:
           echo "Contents of CropService/target directory:"
           ls -al ${{ github.workspace }}/CropService/target
 
-      - name: Verify the Target Directory Exists
-        run: |
-          if [ -d "${{ github.workspace }}/CropService/target" ]; then
-            echo "Target directory exists."
-          else
-            echo "Target directory does not exist."
-            exit 1
-          fi
-
-      - name: Check for Specific File
-        run: |
-          if [ -f "${{ github.workspace }}/CropService/target/crops-microservice-0.0.1-SNAPSHOT.jar" ]; then
-            echo "File exists."
-          else
-            echo "File does not exist."
-            exit 1
-          fi
-
-      - name: Upload Artifact to S3
-        working-directory: ${{ github.workspace }}/CropService/target
-        run: |
-          if ls *.jar 1> /dev/null 2>&1; then
-            aws s3 cp *.jar s3://${{ env.S3BUCKET }}/
-          else
-            echo "No .jar files found in the target directory."
-            exit 1
-          fi
-
       - name: Upload Artifacts for CodeScan
         uses: actions/upload-artifact@v2
         with:
@@ -96,13 +68,6 @@ jobs:
         with:
           name: build-file
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
       - name: Print Directory Structure for CodeScan
         run: |
           echo "Current directory:"
@@ -111,6 +76,13 @@ jobs:
           ls -al
           echo "Contents of downloaded artifacts:"
           ls -al ${{ github.workspace }}/CropService/target
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Run CodeGuru Reviewer
         uses: aws-actions/codeguru-reviewer@v1.1
