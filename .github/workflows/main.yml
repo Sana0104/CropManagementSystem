@@ -6,7 +6,6 @@ on:
   pull_request:
 
 env:
-  applicationfolder: spring-boot-hello-world-example
   AWS_REGION: us-east-1 
   S3BUCKET: glp-s3-1 
   S3bucket_CodeGuru: codeguru-reviewer-glp-s3-1 
@@ -34,26 +33,19 @@ jobs:
         with:
           java-version: 1.8
 
-      - name: List Files for Debugging
-        run: ls -R
-
-      - name: Set Execute Permissions
-        run: chmod -R +x ./.github
-
-      - name: Build and Package Maven
-        id: package
-        working-directory: ${{ env.applicationfolder }}
-        run: ./github/scripts/build.sh
+      - name: Build and Package with Maven
+        run: mvn clean package
+        working-directory: ${{ github.workspace }}
 
       - name: Upload Artifact to S3
-        working-directory: ${{ env.applicationfolder }}/target
+        working-directory: target
         run: aws s3 cp *.war s3://${{ env.S3BUCKET }}/
       
       - name: Upload Artifacts for CodeScan
         uses: actions/upload-artifact@v2
         with:
           name: build-file
-          path: ${{ env.applicationfolder }}/target/*.war           
+          path: target/*.war
 
   codescan:
     needs: build
