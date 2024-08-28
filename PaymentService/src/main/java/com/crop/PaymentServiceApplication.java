@@ -12,7 +12,7 @@ public class PaymentServiceApplication {
 		SpringApplication.run(PaymentServiceApplication.class, args);
 
 	
-        ExampleService service = new ExampleService();
+        PaymentServiceApplication service = new PaymentServiceApplication();
         String result = service.concatenateStrings();
         System.out.println(result);
     }
