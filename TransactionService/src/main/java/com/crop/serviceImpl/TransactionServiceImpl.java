@@ -124,7 +124,7 @@ public class TransactionServiceImpl implements TransactionService {
 
 			transactionRepository.save(existingTransaction);
 
-			return new ResponseEntity<>(existingTransaction,ys HttpStatus.OK);
+			return new ResponseEntity<>(existingTransaction, HttpStatus.OK);
 			
 		} catch (NotEnoughQuantityException ex) {
 			throw ex;
