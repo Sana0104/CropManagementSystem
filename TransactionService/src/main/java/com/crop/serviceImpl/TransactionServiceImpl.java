@@ -30,7 +30,7 @@ public class TransactionServiceImpl implements TransactionService {
 
 	private static final String CROP_SERVICE_URL = "http://localhost:9091"; // Assuming the URL of the CropService
 	private static final String USER_SERVICE_URL = "http://localhost:9095";
-	@Autowiredaskd
+	@Autowired
 	private RestTemplate restTemplate;
 
 	@Autowired
