@@ -95,19 +95,7 @@ jobs:
          echo "##[set-output name=destination_commit;]$(git rev-parse HEAD)"
   
       
-          
-          
-
-      - name: Store SARIF File
-        uses: actions/upload-artifact@v2
-        with:
-          name: SARIF_recommendations
-          path: ./codeguru-results.sarif.json
-
-      - name: Upload Review Result
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: codeguru-results.sarif.json
+    
 
       - name: Check for Critical Vulnerabilities
         run: |
