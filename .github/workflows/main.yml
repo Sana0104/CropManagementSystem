@@ -35,15 +35,18 @@ jobs:
         run: mvn clean package
 
       - name: CodeGuru Reviewer
-       
-       
         uses: aws-actions/codeguru-reviewer@v1.1
         with:
           working-directory: ${{ github.workspace }}/TransactionService
           build_path: .
           s3_bucket: codeguru-reviewer-glp-s3-1
 
+      - name: List Files in Build Directory
+        run: ls -al ${{ github.workspace }}/TransactionService
+
       - name: Upload review result
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: codeguru-results.sarif.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
