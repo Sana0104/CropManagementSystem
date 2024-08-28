@@ -87,16 +87,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Run CodeGuru Reviewer
+      - name: CodeGuru Reviewer
         uses: aws-actions/codeguru-reviewer@v1.1
-        with:
-          s3_bucket: ${{ env.S3bucket_CodeGuru }}
-          source_path: ${{ github.workspace }}/CropService
-          name: Sana0104/CropManagementSystem
-          source_commit: ${{ github.event.pull_request.head.sha || github.sha }}
-          destination_commit: ${{ github.event.pull_request.base.sha || github.event.before }}
-          source_branch: refs/heads/master
-          destination_branch: refs/heads/master
+        if: ${{ always() }} 
+        continue-on-error: false
+        with:          
+          s3_bucket: ${{ env.S3bucket_CodeGuru }} 
+          build_path: .
 
       - name: Store SARIF File
         uses: actions/upload-artifact@v2
