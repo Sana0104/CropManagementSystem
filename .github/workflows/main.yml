@@ -36,19 +36,19 @@ jobs:
         with:
           java-version: 17
 
-      - name: Build and Package Maven for TransactionService
-        working-directory: ${{ github.workspace }}/TransactionService
+      - name: Build and Package Maven for PaymentService
+        working-directory: ${{ github.workspace }}/PaymentService
         run: mvn clean package
 
       - name: CodeGuru Reviewer
         uses: aws-actions/codeguru-reviewer@v1.1
         with:
-          working-directory: ${{ github.workspace }}/TransactionService
+          working-directory: ${{ github.workspace }}/PaymentService
           build_path: .
           s3_bucket: codeguru-reviewer-glp-s3-1
 
       - name: List Files in Build Directory
-        run: ls -al ${{ github.workspace }}/TransactionService
+        run: ls -al ${{ github.workspace }}/PaymentService
 
       - name: Upload review result
         uses: github/codeql-action/upload-sarif@v3
