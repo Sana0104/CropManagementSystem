@@ -97,7 +97,7 @@ jobs:
       - name: CodeGuru Reviewer
         uses: aws-actions/codeguru-reviewer@v1.1
         with:
-          build_path: target
+          build_path: .
           s3_bucket: ${{ env.S3bucket_CodeGuru }}
           
           
