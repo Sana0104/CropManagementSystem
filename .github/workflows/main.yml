@@ -56,3 +56,12 @@ jobs:
           sarif_file: codeguru-results.sarif.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check for Critical Vulnerabilities
+        run: |
+          echo "Check for critical vulnerabilities"
+          count=$(cat codeguru-results.sarif.json | jq '.runs[].results[] | select(.level == "error") | .level' | wc -l)
+          if (( $count > 0 )); then
+            echo "There are $count critical findings, stopping the pipeline."
+            exit 1
+          fi
