@@ -101,8 +101,7 @@ jobs:
         with:          
           s3_bucket: ${{ env.S3bucket_CodeGuru }} 
           build_path: .
-          source_commit: ${{ steps.commits.outputs.source_commit }}
-          destination_commit: ${{ steps.commits.outputs.destination_commit }}
+          
           
 
       - name: Store SARIF File
