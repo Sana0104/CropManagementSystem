@@ -58,6 +58,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check for Critical Vulnerabilities
+        working-directory: ${{ github.workspace }}/PaymentService
         run: |
           echo "Check for critical vulnerabilities"
           count=$(cat codeguru-results.sarif.json | jq '.runs[].results[] | select(.level == "error") | .level' | wc -l)
