@@ -94,7 +94,26 @@ jobs:
          echo "##[set-output name=source_commit;]$(git rev-parse HEAD~1)"
          echo "##[set-output name=destination_commit;]$(git rev-parse HEAD)"
   
-      
+      - name: CodeGuru Reviewer
+        uses: aws-actions/codeguru-reviewer@v1.1
+        if: ${{ always() }} 
+        continue-on-error: false
+        with:          
+         s3_bucket: ${{ env.S3bucket_CodeGuru }} 
+         build_path: .
+
+      - name: Store SARIF file
+        if: steps.iam-role.outcome == 'success'
+        uses: actions/upload-artifact@v2
+        with:
+          name: SARIF_recommendations
+          path: ./codeguru-results.sarif.json
+
+      - name: Upload review result
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+         sarif_file: codeguru-results.sarif.json
+    
     
 
       - name: Check for Critical Vulnerabilities
