@@ -30,12 +30,13 @@ jobs:
         with:
           java-version: 17
 
-      - name: Build and Package Maven for CropService
-        working-directory: ${{ github.workspace }}/CropService
+      - name: Build and Package Maven for TransactionService
+        working-directory: ${{ github.workspace }}/TransactionService
         run: mvn clean package
 
       - name: CodeGuru Reviewer
         uses: aws-actions/codeguru-reviewer@v1.1
+         working-directory: ${{ github.workspace }}/TransactionService
         with:
           build_path: .
           s3_bucket: codeguru-reviewer-glp-s3-1
