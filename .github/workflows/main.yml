@@ -30,8 +30,9 @@ jobs:
         with:
           java-version: 17
 
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
+      - name: Build and Package Maven for CropService
+        working-directory: ${{ github.workspace }}/CropService
+        run: mvn clean package
 
       - name: CodeGuru Reviewer
         uses: aws-actions/codeguru-reviewer@v1.1
