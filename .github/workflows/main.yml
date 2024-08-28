@@ -91,8 +91,10 @@ jobs:
         uses: aws-actions/codeguru-reviewer@v1.1
         with:
           s3_bucket: ${{ env.S3bucket_CodeGuru }}
-          destination_commit: ${{ github.event.before }}
-          source_commit: ${{ github.sha }}
+          source_path: ${{ github.workspace }}/CropService
+          name: Sana0104/CropManagementSystem
+          source_commit: ${{ github.event.pull_request.head.sha || github.sha }}
+          destination_commit: ${{ github.event.pull_request.base.sha || github.event.before }}
           source_branch: refs/heads/master
           destination_branch: refs/heads/master
 
