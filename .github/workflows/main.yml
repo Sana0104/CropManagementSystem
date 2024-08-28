@@ -103,8 +103,7 @@ jobs:
           build_path: .
           source_commit: ${{ steps.commits.outputs.source_commit }}
           destination_commit: ${{ steps.commits.outputs.destination_commit }}
-          association_arn: arn:aws:codeguru-reviewer:us-east-1:***:association:4567d509-c237-4f8e-8462-0ed140e61dfe
-
+          
 
       - name: Store SARIF File
         uses: actions/upload-artifact@v2
