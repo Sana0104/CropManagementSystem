@@ -36,7 +36,7 @@ jobs:
 
       - name: CodeGuru Reviewer
         uses: aws-actions/codeguru-reviewer@v1.1
-         working-directory: ${{ github.workspace }}/TransactionService
+        working-directory: ${{ github.workspace }}/TransactionService
         with:
           build_path: .
           s3_bucket: codeguru-reviewer-glp-s3-1
