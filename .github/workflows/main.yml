@@ -40,8 +40,7 @@ jobs:
       - name: Build and Package Maven for PaymentService
         working-directory: ${{ github.workspace }}/PaymentService
         run: mvn clean package
-        
-      
+
   codescan:
     needs: build
     runs-on: ubuntu-latest
@@ -54,7 +53,7 @@ jobs:
       - name: CodeGuru Reviewer
         uses: aws-actions/codeguru-reviewer@v1.1
         with:
-          build_path: .
+          build_path: ./PaymentService
           s3_bucket: glp-s3-1
 
       - name: List Files in Build Directory
