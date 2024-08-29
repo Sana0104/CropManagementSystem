@@ -66,5 +66,3 @@ jobs:
             echo "There are $count critical findings, stopping the pipeline."
             exit 1
           fi
-
-has context menu
