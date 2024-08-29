@@ -47,7 +47,7 @@ jobs:
         working-directory: ${{ github.workspace }}/PaymentService/target
         run: |
           if ls *.jar 1> /dev/null 2>&1; then
-            aws s3 cp *.jar s3://${{ env.S3BUCKET }}/
+            aws s3 cp *.jar s3://glp-s3-1/
           else
             echo "No .jar files found in the target directory."
             exit 1
