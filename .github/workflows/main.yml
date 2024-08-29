@@ -41,16 +41,7 @@ jobs:
         working-directory: ${{ github.workspace }}/PaymentService
         run: mvn clean package
         
-      - name: Upload Artifact to S3
-        working-directory: ${{ github.workspace }}/PaymentService/target
-        run: |
-          if ls *.jar 1> /dev/null 2>&1; then
-            aws s3 cp *.jar s3://glp-s3-1/
-          else
-            echo "No .jar files found in the target directory."
-            exit 1
-          fi
-
+      
   codescan:
     needs: build
     runs-on: ubuntu-latest
@@ -65,7 +56,7 @@ jobs:
         with:
           working-directory: ${{ github.workspace }}/PaymentService
           build_path: .
-          s3_bucket: codeguru-reviewer-glp-s3-1
+          s3_bucket: glp-s3-1
 
       - name: List Files in Build Directory
         run: ls -al ${{ github.workspace }}/PaymentService
