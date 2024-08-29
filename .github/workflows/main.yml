@@ -40,6 +40,11 @@ jobs:
         working-directory: ${{ github.workspace }}/PaymentService
         run: mvn clean package
  
+  codescan:
+     needs: build
+     runs-on: ubuntu-latest
+
+     steps:
       - name: CodeGuru Reviewer
         uses: aws-actions/codeguru-reviewer@v1.1
         with:
@@ -68,14 +73,14 @@ jobs:
           fi
 
   deploy:
-   
-    runs-on: ubuntu-latest
-    environment: Dev
-    permissions:
+   needs: codescan
+   runs-on: ubuntu-latest
+   environment: Dev
+   permissions:
       id-token: write
       contents: read
 
-    steps:
+   steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
