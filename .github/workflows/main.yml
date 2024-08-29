@@ -54,7 +54,7 @@ jobs:
         uses: aws-actions/codeguru-reviewer@v1.1
         with:
           build_path: ./PaymentService
-          s3_bucket: glp-s3-1
+          s3_bucket: codeguru-reviewer-glp-s3-1
 
       - name: List Files in Build Directory
         run: ls -al ${{ github.workspace }}/PaymentService
