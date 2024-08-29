@@ -14,10 +14,7 @@ permissions:
   checks: write
   security-events: write
 
-env:
-  AWS_REGION: us-east-1
-  S3BUCKET: glp-s3-1
-  S3bucket_CodeGuru: codeguru-reviewer-glp-s3-1
+
 
 jobs:
   build:
@@ -88,7 +85,7 @@ jobs:
         with:
           working-directory: ${{ github.workspace }}/PaymentService
           build_path: .
-          s3_bucket: ${{ env.S3bucket_CodeGuru }}
+          s3_bucket: codeguru-reviewer-glp-s3-1
 
       - name: List Files in Build Directory
         run: ls -al ${{ github.workspace }}/PaymentService
