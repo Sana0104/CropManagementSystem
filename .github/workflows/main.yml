@@ -17,7 +17,7 @@ permissions:
 env:
   AWS_REGION: us-east-1
   S3BUCKET: glp-s3-1
-  S3bucket_CodeGuru: codeguru-reviewer-your-glp-s3-1
+  S3bucket_CodeGuru: codeguru-reviewer-glp-s3-1
 
 jobs:
   build:
